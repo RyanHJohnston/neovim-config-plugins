@@ -69,4 +69,18 @@ let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = ''
 
-inoremap <expr> <Tab> pumvisible() ? coc#_select_confirm() : "<Tab>"
+" Splits terminal horizontally or vertically depending on input
+command! -nargs=* T belowright split | terminal <args>
+command! -nargs=* VT rightbelow vsplit | terminal <args>
+command! -nargs=* RVT rightbelow vsplit | terminal <args>
+command! -nargs=* LVT vsplit | terminal <args>
+
+" Switches between panes
+map <up> <C-w><up>
+map <down> <C-w><down>
+map <left> <C-w><left>
+
+" inoremap <expr> <Tab> pumvisible() ? coc#_select_confirm() : "<Tab>"
+
+" Exits terminal mode when in split terminal
+:tnoremap <Esc> <C-Esc>
