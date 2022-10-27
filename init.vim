@@ -1,13 +1,35 @@
+" Basic configs using :set attribute
 :set number
 :set relativenumber
 :set autoindent
 :set tabstop=4
-:set shiftwidth=4
+:set shiftwidth=4 
 :set smarttab
 :set softtabstop=4
 :set mouse=a
-call plug#begin()
+:set cursorline
+:set cursorcolumn
+:set expandtab
+:set nobackup
+:set scrolloff=10
+:set nowrap
+:set incsearch
+:set ignorecase
+:set smartcase
+:set showcmd
+:set showmode
+:set showmatch
+:set hlsearch
+:set history=1000
+:set wildmenu
+:set wildmode=list:longest
+:set wildignore=*.docx,*.jpg,*.png,*.gif,*.pdf,*.pyc,*.exe,*.flv,*.img,*.xlsx
 
+syntax on
+filetype on
+filetype plugin on
+filetype indent on
+call plug#begin()
 Plug 'http://github.com/tpope/vim-surround' " Surrounding ysw)
 Plug 'https://github.com/preservim/nerdtree' " NerdTree
 Plug 'https://github.com/tpope/vim-commentary' " For Commenting gcc & gc
@@ -23,13 +45,24 @@ Plug 'https://github.com/ryanoasis/vim-devicons' " Developer Icons
 Plug 'https://github.com/tc50cal/vim-terminal' " Vim Terminal
 Plug 'https://github.com/preservim/tagbar' " Tagbar for code navigation
 Plug 'https://github.com/terryma/vim-multiple-cursors' " CTRL + N for multiple cursors
-
-" This are plugins for jc.nvim, a speical autocompletion for Java, b/c Java is
-" a nightmare.
-
 set encoding=UTF-8
-
 call plug#end()
+
+" VIMSCRIPT
+" ----------------------------------------------------------------------------------------
+" This will enable code folding.
+" Use the market method of folding.
+augroup filetype_vim
+	autocmd!
+	autocmd FileType vim setlocal foldmethod=marker
+augroup END
+" Quick reference:
+" To open a single fold under the cursor: zo
+" To close the fold under the cursor: zc
+" To open all folds: zR
+" To close all folds: zM
+" To have more information: :help folding
+" ----------------------------------------------------------------------------------------
 
 nnoremap <C-f> :NERDTreeFocus<CR>
 nnoremap <C-n> :NERDTree<CR>
@@ -39,8 +72,6 @@ nnoremap <C-l> :call CocActionAsync('jumpDefinition')<CR>
 nmap <F8> :TagbarToggle<CR>
 
 :set completeopt-=preview " For No Previews
-
-" :colorscheme jellybeans
 
 let g:NERDTreeDirArrowExpandable="+"
 let g:NERDTreeDirArrowCollapsible="~"
@@ -74,7 +105,7 @@ command! -nargs=* T belowright split | terminal <args>
 command! -nargs=* VT rightbelow vsplit | terminal <args>
 command! -nargs=* RVT rightbelow vsplit | terminal <args>
 command! -nargs=* LVT vsplit | terminal <args>
-
+command! -nargs=* Tree NERDTreeFocus <args>
 " Switches between panes
 map <up> <C-w><up>
 map <down> <C-w><down>
@@ -84,3 +115,16 @@ map <left> <C-w><left>
 
 " Exits terminal mode when in split terminal
 :tnoremap <Esc> <C-Esc>
+
+" turns off that weird error of illegal arguments in index.js
+let b:coc_diagnostic_disable=1
+
+" Uses <Tab> for trigger completion
+function! CheckBackSpace() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1] =~# '\s'
+endfunction
+inoremap <silent><expr> <Tab>
+    \ coc#pum#visible() ? coc#pum#next(1) :
+    \ CheckBackSpace() ? "\<Tab>" :
+    \ coc#refresh()
